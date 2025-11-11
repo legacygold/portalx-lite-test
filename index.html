@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PortalX LITE - Wallet Connect Test</title>
+</head>
+<body>
+  <h2>Connect your Lobstr Wallet</h2>
+  <button id="connectBtn">Connect Lobstr</button>
+
+  <script type="module">
+    import { AppKit } from "https://unpkg.com/@reown/appkit@latest/dist/index.js";
+    // 1️⃣  Create a new AppKit instance
+    const appKit = new AppKit({
+      projectId: "48b7bf0dacf7920c182f112b3cc388a8",     // from your Reown dashboard
+      wallets: [
+        {
+          id: "76a3d548a08cf402f5c7d021f24fd2881d767084b387a5325df88bc3d4b6f21b",
+          name: "Lobstr"
+        }
+      ],
+      chains: ["stellar:pubnet"]
+    });
+
+    // 2️⃣  Define what to do when the user clicks “Connect Lobstr”
+    document.getElementById("connectBtn").addEventListener("click", async () => {
+      try {
+        // Start a WalletConnect session
+        const session = await appKit.connect({
+          requiredNamespaces: {
+            stellar: {
+              chains: ["stellar:pubnet"],
+              methods: ["stellar_signXDR", "stellar_signAndSubmitXDR"],
+              events: ["chainChanged", "accountsChanged"]
+            }
+          }
+        });
+
+        // 3️⃣  If connected, show wallet information
+        const account = session.namespaces.stellar.accounts[0];
+        alert("Connected!\nPublic Key: " + account);
+        console.log("Full session object:", session);
+      } catch (err) {
+        console.error("Connection failed:", err);
+        alert("Connection cancelled or failed. Check console for details.");
+      }
+    });
+  </script>
+</body>
+</html>
