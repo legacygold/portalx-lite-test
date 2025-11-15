@@ -24,7 +24,7 @@ export async function getUniversalConnector() {
         metadata: {
           name: 'PortalX LITE',
           description: 'Lightweight Stellar connector',
-          url: 'http://localhost:5173',
+          url: 'https://legacygold.github.io/portalx-lite-test',
           icons: ['https://legacygold.github.io/portalx-lite-test/icon.png']
         },
         wallets: [
