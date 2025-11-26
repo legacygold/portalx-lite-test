@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
-import jsr from "@jsr/rollup-plugin-jsr";
 
 export default defineConfig({
-  plugins: [
-    jsr()
-  ]
-});
+  base: '/portalx-lite-test/',   // VERY IMPORTANT
+  plugins: [ ]
+})
+
+

@@ -1,41 +1,31 @@
 import { StellarWalletsKit } from "@creit-tech/stellar-wallets-kit/sdk";
+import { SwkAppDarkTheme } from "@creit-tech/stellar-wallets-kit/types";
+import { LobstrModule } from "@creit-tech/stellar-wallets-kit/modules/lobstr";
+import { ButtonMode } from '@creit-tech/stellar-wallets-kit/components';
+import { KitEventType } from "@creit-tech/stellar-wallets-kit/types";
 
-async function init() {
-  const kit = new StellarWalletsKit({
-    network: WalletNetwork.PUBLIC,
-    modules: [
-      new LobstrModule(),
-      new WalletConnectModule({
-        name: "PortalX LITE",
-        description: "PortalX LITE connects to your Lobstr wallet",
-        url: window.location.origin,
-        icons: ["https://legacygold.github.io/portalx-lite-test/icon.png"], // change if needed
-        projectId: "48b7bf0dacf7920c182f112b3cc388a8"
-      })
-    ]
-  });
+// 1. Init the kit
+StellarWalletsKit.init({
+  theme: SwkAppDarkTheme,
+  modules: [
+    new LobstrModule()
+  ],
+});
 
-  kit.createButton({
-    container: document.getElementById("wallet-connect-btn"),
-    onConnect: async ({ address }) => {
-      console.log("Connected address:", address);
-      // TODO: pass this address into your Apps Script / Sheets container
-    },
-    onDisconnect: () => {
-      console.log("Disconnected");
-    },
-    horizonUrl: "https://horizon.stellar.org"
-  });
+// 2. Render button
+const buttonWrapper = document.querySelector('#buttonWrapper');
+StellarWalletsKit.createButton(buttonWrapper, {
+  mode: ButtonMode.free,
+  classes: 'btn btn-primary'
+});
 
-  // example function to sign transaction XDR
-  window.signXdr = async function (xdr) {
-    const { address } = await kit.getWallet();
-    const { signedXDR } = await kit.signTransaction(xdr, {
-      address,
-      networkPassphrase: WalletNetwork.PUBLIC
-    });
-    return signedXDR;
-  };
-}
+// 3. Subscribe to state updates
+StellarWalletsKit.on(KitEventType.STATE_UPDATED, e => {
+  console.log("STATE UPDATED:", e.payload);
+});
 
-init();
+// 4. Subscribe to disconnect event
+StellarWalletsKit.on(KitEventType.DISCONNECT, () => {
+  console.log("Wallet disconnected");
+});
+
