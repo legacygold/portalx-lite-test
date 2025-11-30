@@ -1,7 +1,6 @@
 import { StellarWalletsKit } from "@creit-tech/stellar-wallets-kit/sdk";
 import { SwkAppDarkTheme } from "@creit-tech/stellar-wallets-kit/types";
 import { WalletConnectModule } from "@creit-tech/stellar-wallets-kit/modules/wallet-connect";
-import { LobstrModule } from "@creit-tech/stellar-wallets-kit/modules/lobstr";
 import { ButtonMode } from "@creit-tech/stellar-wallets-kit/components";
 import { KitEventType } from "@creit-tech/stellar-wallets-kit/types";
 
@@ -17,7 +16,6 @@ StellarWalletsKit.init({
         icons: ["https://legacygold.github.io/portalx-lite-test/icon.png"]
       }
     }),
-    new LobstrModule(),  // ← required so the UI shows Lobstr
   ],
 });
 
