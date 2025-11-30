@@ -1,47 +1,39 @@
+// ---------------------------------------------------------
+// VERSION A — defaultModules (recommended starting point)
+// ---------------------------------------------------------
+
 import { StellarWalletsKit } from "@creit-tech/stellar-wallets-kit/sdk";
+import { defaultModules } from '@creit-tech/stellar-wallets-kit/modules/utils';
 import { SwkAppDarkTheme } from "@creit-tech/stellar-wallets-kit/types";
-import { WalletConnectModule } from "@creit-tech/stellar-wallets-kit/modules/wallet-connect";
-import { ButtonMode } from "@creit-tech/stellar-wallets-kit/components";
 import { KitEventType } from "@creit-tech/stellar-wallets-kit/types";
 
+// 1️⃣ Init using DEFAULT MODULES (includes WalletConnect)
 StellarWalletsKit.init({
   theme: SwkAppDarkTheme,
-  modules: [
-    new WalletConnectModule({
-      projectId: "48b7bf0dacf7920c182f112b3cc388a8",  
-      metadata: {
-        name: "PortalX Lite",
-        description: "PortalX Lite Wallet Connector",
-        url: "https://legacygold.github.io/portalx-lite-test/",
-        icons: ["https://legacygold.github.io/portalx-lite-test/icon.png"]
-      }
-    }),
-  ],
+  modules: defaultModules(),
 });
 
-const buttonWrapper = document.querySelector('#buttonWrapper');
+// 2️⃣ Insert button
+const buttonWrapper = document.querySelector("#buttonWrapper");
 
-StellarWalletsKit.createButton(buttonWrapper, {
-  mode: ButtonMode.free,
-  classes: "btn btn-primary"
+StellarWalletsKit.createButton(buttonWrapper);
+
+// 3️⃣ Events
+StellarWalletsKit.on(KitEventType.STATE_UPDATED, (e) => {
+  console.log("STATE UPDATED:", e);
 });
-
-// EVENTS
-StellarWalletsKit.on(KitEventType.STATE_UPDATED, (event) => {
-  console.log("Updated:", event);
-});
-
 StellarWalletsKit.on(KitEventType.DISCONNECT, () => {
-  console.log("Disconnected");
+  console.log("Wallet disconnected.");
 });
 
-// ON CLICK
-buttonWrapper.addEventListener("click", async () => {
-  try {
-    console.log("Opening auth modal...");
-    const { address } = await StellarWalletsKit.authModal();
-    console.log("Connected:", address);
-  } catch (err) {
-    console.error("Error:", err);
-  }
+// 4️⃣ Connect wallet, authenticate, and sign transaction
+const {address} = await StellarWalletsKit.authModal();
+
+console.log("Connected Stellar Address:", address);
+
+const {signedTxXdr} = await StellarWalletsKit.signTransaction(tx.toXDR(), {
+  networkPassphrase: Networks.PUBLIC,
+  address,
 });
+
+console.log("Signed Transaction:", signedTxXdr);
