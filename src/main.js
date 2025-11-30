@@ -16,7 +16,7 @@ StellarWalletsKit.init({
       metadata: {
         name: "PortalX LITE",
         description: "PortalX LITE Wallet Connector",
-        icons: [ "https://legacygold.github.io/portalx-lite-test/icon.png" ],
+        icons: [ "https://legacygold.github.io/portalx-lite-test/icon.PNG" ],
         url: 'https://legacygold.github.io/portalx-lite-test/',
       }
     }),
