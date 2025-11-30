@@ -1,64 +1,49 @@
 import { StellarWalletsKit } from "@creit-tech/stellar-wallets-kit/sdk";
 import { SwkAppDarkTheme } from "@creit-tech/stellar-wallets-kit/types";
+import { WalletConnectModule } from "@creit-tech/stellar-wallets-kit/modules/wallet-connect";
 import { LobstrModule } from "@creit-tech/stellar-wallets-kit/modules/lobstr";
 import { ButtonMode } from "@creit-tech/stellar-wallets-kit/components";
 import { KitEventType } from "@creit-tech/stellar-wallets-kit/types";
 
-// ---------------------------------------------------------
-// 1️⃣  Initialize Kit (Theme + Modules)
-// ---------------------------------------------------------
 StellarWalletsKit.init({
   theme: SwkAppDarkTheme,
   modules: [
-    new LobstrModule(),
+    new WalletConnectModule({
+      projectId: "48b7bf0dacf7920c182f112b3cc388a8",  
+      metadata: {
+        name: "PortalX Lite",
+        description: "PortalX Lite Wallet Connector",
+        url: "https://legacygold.github.io/portalx-lite-test/",
+        icons: ["https://legacygold.github.io/portalx-lite-test/icon.png"]
+      }
+    }),
+    new LobstrModule(),  // ← required so the UI shows Lobstr
   ],
 });
 
-// ---------------------------------------------------------
-// 2️⃣  Create the Connect button
-// ---------------------------------------------------------
-const wrapper = document.querySelector("#buttonWrapper");
+const buttonWrapper = document.querySelector('#buttonWrapper');
 
-StellarWalletsKit.createButton(wrapper, {
+StellarWalletsKit.createButton(buttonWrapper, {
   mode: ButtonMode.free,
   classes: "btn btn-primary"
 });
 
-// ---------------------------------------------------------
-// 3️⃣  Wait for the button to exist, then bind to it
-// ---------------------------------------------------------
-setTimeout(() => {
-  const btn = wrapper.querySelector("button");
-
-  if (!btn) {
-    console.error("Button not found!");
-    return;
-  }
-
-  console.log("Attaching authModal to button…");
-
-  btn.addEventListener("click", async () => {
-    try {
-      console.log("Opening Lobstr auth modal…");
-      const { address } = await StellarWalletsKit.authModal();
-
-      console.log("Connected wallet:", address);
-      alert("Connected wallet:\n" + address);
-
-    } catch (err) {
-      console.error("Error during connection:", err);
-    }
-  });
-
-}, 300); // ← small delay so the Kit has time to render the button
-
-// ---------------------------------------------------------
-// 4️⃣  Listen for STATE updates
-// ---------------------------------------------------------
+// EVENTS
 StellarWalletsKit.on(KitEventType.STATE_UPDATED, (event) => {
-  console.log("STATE UPDATED:", event);
+  console.log("Updated:", event);
 });
 
 StellarWalletsKit.on(KitEventType.DISCONNECT, () => {
-  console.log("Wallet disconnected");
+  console.log("Disconnected");
+});
+
+// ON CLICK
+buttonWrapper.addEventListener("click", async () => {
+  try {
+    console.log("Opening auth modal...");
+    const { address } = await StellarWalletsKit.authModal();
+    console.log("Connected:", address);
+  } catch (err) {
+    console.error("Error:", err);
+  }
 });
